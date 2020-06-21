@@ -2,6 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
+const cors = require('cors')
 
 // set port
 const port = process.env.PORT || 3000;
@@ -10,6 +11,7 @@ const app = express();
 // menggunakan body parser
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cors());
 
 // setting koneksi database
 const conn = mysql.createConnection({
@@ -31,11 +33,33 @@ app.route("/api").get((req, res)=>{
         }
         else
         {
-            const data = {
-                'status':200,
-                'data' : rows
-            };
-            res.json(data);
+            // const data = {
+            //     'status':200,
+            //     'data' : rows
+            // };
+            res.json(rows);
+            res.end();
+        }
+    })
+});
+
+app.route("/api/:id").get((req, res)=>{
+    const id = req.params.id;
+    // query
+    const query = "select * from guestbook where ID='"+id+"'"; 
+
+    // eksekusi query
+    conn.query(query, function(error, rows){
+        if(error){
+            console.log(error);
+        }
+        else
+        {
+            // const data = {
+            //     'status':200,
+            //     'data' : rows
+            // };
+            res.json(rows[0]);
             res.end();
         }
     })
@@ -60,11 +84,11 @@ app.route("/api").post((req, res)=>{
         }
         else
         {
-            const data = {
-                'status':200,
-                'data' : rows
-            };
-            res.json(data);
+            // const data = {
+            //     'status':200,
+            //     'data' : rows
+            // };
+            res.json(rows);
             res.end();
         }
     })
@@ -92,11 +116,36 @@ app.route("/api/:id").put((req, res)=>{
         }
         else
         {
-            const data = {
-                'status':200,
-                'data' : rows
-            };
-            res.json(data);
+            // const data = {
+            //     'status':200,
+            //     'data' : rows
+            // };
+            res.json(rows);
+            res.end();
+        }
+    })
+});
+
+// routing untuk /api method put, (update data)
+app.route("/api/:id").delete((req, res)=>{
+    // ambil parameter
+    const id = req.params.id;
+
+    // query
+    const query =`delete from guestbook where ID='${id}'`;
+                    
+    // eksekusi query
+    conn.query(query, function(error, rows){
+        if(error){
+            console.log(error);
+        }
+        else
+        {
+            // const data = {
+            //     'status':200,
+            //     'data' : rows
+            // };
+            res.json(rows);
             res.end();
         }
     })
